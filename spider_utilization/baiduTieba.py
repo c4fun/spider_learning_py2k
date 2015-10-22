@@ -62,10 +62,11 @@ class BaiduTieba:
 
     # 获取帖子标题
     def getTitle(self, page):
-        pattern = re.compile('<h1 class="core_title_txt.*?>(.*?)</h1>', re.S)
+        # 有些帖子是h1，有些又是h3，所以这里不是用h?来定位，而是core_title_txt
+        pattern = re.compile('<h[1-6] class="core_title_txt.*?>(.*?)</h[1-6]>', re.S)
         result = re.search(pattern, page)
         if result:
-            # print result.group(1)  #测试输出
+            print result.group(1)  #测试输出
             return result.group(1).strip()
         else:
             return None
@@ -86,7 +87,7 @@ class BaiduTieba:
         items = re.findall(pattern, page)
         contents = []
         for item in items:
-            content = self.tool.replace(item)
+            content = self.tool.replace(item) + "\n"
             contents.append(content)
         return contents
 
@@ -132,7 +133,13 @@ class BaiduTieba:
 
 
 if __name__ == '__main__':
-    # baseURL = (u"请输入帖子代号")
-    baseURL = 'http://tieba.baidu.com/p/3138733512'
-    bdtb = BaiduTieba(baseURL, 1, 1)
+    baseURL = "http://tieba.baidu.com/p/" + str(input(u"请输入帖子代号，仅仅数字即可> "))
+    seeLZ = input(u"只看楼主吗？是请输入1；否请输入0> ")
+    floorTag = input(u"是否写入楼层信息？是请输入1；否请输入0> ")
+    bdtb = BaiduTieba(baseURL, seeLZ, floorTag)
     bdtb.start()
+
+    # if True:
+    #     baseURL = 'http://tieba.baidu.com/p/3138733512'
+    #     bdtb = BaiduTieba(baseURL, 1, 1)
+    #     bdtb.start()
